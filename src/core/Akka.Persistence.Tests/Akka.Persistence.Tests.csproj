@@ -76,6 +76,7 @@
     <Compile Include="AtLeastOnceDeliverySpec.cs" />
     <Compile Include="AtomicWriteSpec.cs" />
     <Compile Include="EndToEndEventAdapterSpec.cs" />
+    <Compile Include="Fsm\PersistentFSMAsyncSpec.cs" />
     <Compile Include="Fsm\PersistentFSMSpec.cs" />
     <Compile Include="Journal\ChaosJournal.cs" />
     <Compile Include="Journal\MemoryEventAdaptersSpec.cs" />

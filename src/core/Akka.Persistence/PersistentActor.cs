@@ -14,6 +14,10 @@ using Akka.Tools.MatchHandler;
 
 namespace Akka.Persistence
 {
+    using System.Threading.Tasks;
+
+    using Akka.Dispatch;
+
     [Serializable]
     public sealed class RecoveryCompleted
     {
@@ -354,8 +358,41 @@ namespace Akka.Persistence
 
         #endregion
 
+        #region Persist methods with async support
+
+        public void PersistAwaitable<TEvent>(TEvent @event, Func<TEvent, Task> handler)
+        {
+            Persist(@event, WrapAsyncHandler(handler));
+        }
+
+        public void PersistAllAwaitable<TEvent>(IEnumerable<TEvent> events, Func<TEvent, Task> handler)
+        {
+            PersistAll(events, WrapAsyncHandler(handler));
+        }
+
+        public void PersistAsyncAwaitable<TEvent>(TEvent @event, Func<TEvent, Task> handler)
+        {
+            PersistAsync(@event, WrapAsyncHandler(handler));
+        }
+
+        public void PersistAllAsyncAwaitable<TEvent>(IEnumerable<TEvent> events, Func<TEvent, Task> handler)
+        {
+            PersistAllAsync(events, WrapAsyncHandler(handler));
+        }
+
+        #endregion
+
         #region Command helper methods
-        
+
+        private Action<T> WrapAsyncHandler<T>(Func<T, Task> asyncHandler)
+        {
+            return m =>
+            {
+                Func<Task> wrap = () => asyncHandler(m);
+                ActorTaskScheduler.RunTask(wrap);
+            };
+        }
+
         private void EnsureMayConfigureCommandHandlers()
         {
             if (_matchCommandBuilders.Count <= 0)
@@ -368,9 +405,19 @@ namespace Akka.Persistence
             _matchCommandBuilders.Peek().Match<T>(handler, shouldHandle);
         }
 
+        protected void CommandAsync<T>(Func<T, Task> handler, Predicate<T> shouldHandle = null)
+        {
+            Command(WrapAsyncHandler(handler), shouldHandle);
+        }
+
         protected void Command<T>(Predicate<T> shouldHandle, Action<T> handler)
         {
             Command<T>(handler, shouldHandle);
+        }
+
+        protected void CommandAsync<T>(Predicate<T> shouldHandle, Func<T, Task> handler)
+        {
+            Command(WrapAsyncHandler(handler), shouldHandle);
         }
 
         protected void Command(Type messageType, Action<object> handler, Predicate<object> shouldHandle = null)
@@ -379,9 +426,19 @@ namespace Akka.Persistence
             _matchCommandBuilders.Peek().Match(messageType, handler, shouldHandle);
         }
 
+        protected void CommandAsync(Type messageType, Func<object, Task> handler, Predicate<object> shouldHandle = null)
+        {
+            Command(messageType, WrapAsyncHandler(handler), shouldHandle);
+        }
+
         protected void Command(Type messageType, Predicate<object> shouldHandle, Action<object> handler)
         {
             Command(messageType, handler, shouldHandle);
+        }
+
+        protected void CommandAsync(Type messageType, Predicate<object> shouldHandle, Func<object, Task> handler)
+        {
+            Command(messageType, WrapAsyncHandler(handler), shouldHandle);
         }
 
         protected void Command<T>(Func<T, bool> handler)

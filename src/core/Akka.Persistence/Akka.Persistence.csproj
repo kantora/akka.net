@@ -65,7 +65,9 @@
     <Compile Include="AtLeastOnceDelivery.cs" />
     <Compile Include="Eventsourced.cs" />
     <Compile Include="Eventsourced.Recovery.cs" />
+    <Compile Include="Fsm\PersistentFSMAsync.cs" />
     <Compile Include="Fsm\PersistentFSM.cs" />
+    <Compile Include="Fsm\PersistentFSMBaseAsync.cs" />
     <Compile Include="Fsm\PersistentFSMBase.cs" />
     <Compile Include="InternalExtensions.cs" />
     <Compile Include="Journal\EventAdapters.cs" />
