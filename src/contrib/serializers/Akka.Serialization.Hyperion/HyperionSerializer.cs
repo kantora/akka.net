@@ -16,6 +16,8 @@ using Hyperion;
 // ReSharper disable once CheckNamespace
 namespace Akka.Serialization
 {
+    using System.Reflection;
+
     /// <summary>
     /// This is a special <see cref="Serializer"/> that serializes and deserializes plain old CLR objects (POCOs).
     /// </summary>

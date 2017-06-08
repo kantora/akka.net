@@ -5,9 +5,10 @@
     <AssemblyTitle>Akka.Serialization.Hyperion</AssemblyTitle>
     <Description>Hyperion serializer for Akka.NET</Description>
     <VersionSuffix>beta</VersionSuffix>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
     <PackageTags>$(AkkaPackageTags);hyperion;serializer;serialize</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.1</NetStandardImplicitPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hyperion" Version="0.9.2" />
+    <PackageReference Include="Hyperion" Version="0.9.5" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
@@ -24,12 +25,20 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.Runtime" version="4.3.0" />
+  </ItemGroup>
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>$(DefineConstants);SERIALIZATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);SERIALIZATION;APPDOMAIN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
 </Project>
